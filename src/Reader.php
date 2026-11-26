@@ -80,8 +80,15 @@ final readonly class Reader
         }
 
         $xpath = new DOMXPath($document);
+        // The name may be empty, as the document type definition allows, but the element has to be there.
+        $supplierName = self::rawOptional($xpath, '/DataSet/DataSupplier/Name');
+
+        if ($supplierName === null) {
+            throw UnreadableExport::because($path, 'the element /DataSet/DataSupplier/Name is missing');
+        }
+
         $supplier = new DataSupplier(
-            self::text($xpath, '/DataSet/DataSupplier/Name', $path),
+            trim($supplierName),
             self::optional($xpath, '/DataSet/DataSupplier/Location'),
             self::optional($xpath, '/DataSet/DataSupplier/Comment'),
         );

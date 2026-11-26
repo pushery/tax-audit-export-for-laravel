@@ -27,11 +27,11 @@ This README is the quick start; the guides and the configuration reference live 
 
 ## Requirements
 
-- PHP 8.4+ with the `dom`, `libxml` and `mbstring` extensions, which a standard PHP build carries
+- PHP 8.4+ (tested on 8.4.27, 8.5.x and 8.6.x) with the `dom`, `libxml` and `mbstring` extensions, which a standard PHP build carries
 - Laravel 13+
 
 The package keeps no table and needs no database: it writes files from the rows your
-application hands it.
+application hands it. Its suite still runs on PostgreSQL 18.7 and MySQL 8.4.13 beside SQLite.
 
 Tested on the floor of the declared PHP range, because a `>=` promise is only proven
 by running on the boundary, and on the minor version above it, so the range above the
@@ -58,6 +58,15 @@ started from `Pushery\TaxAuditExport\ExportSettings` names the data supplier tha
 `TAX_AUDIT_EXPORT_SUPPLIER_NAME`, `TAX_AUDIT_EXPORT_SUPPLIER_LOCATION` and
 `TAX_AUDIT_EXPORT_SUPPLIER_COMMENT` set. An export built with a `DataSupplier` of its own names that
 one and reads none of them. The package ships no migrations, routes or views.
+
+To change the package's translations, publish them and edit the copies:
+
+```bash
+php artisan vendor:publish --tag=tax-audit-export-lang
+```
+
+The translations land in `lang/vendor/tax-audit-export`, where Laravel reads them before the
+package's own. `--tag=tax-audit-export` publishes the configuration and the translations at once.
 
 ## Usage
 
@@ -100,13 +109,13 @@ configuration stay in the development repository, so a clone of this repository 
 Please review the [security policy](SECURITY.md) and report vulnerabilities
 privately rather than opening a public issue.
 
-## Built by Pushery
+## Built by PUSHERY
 
-This package is built and maintained by [Pushery](https://www.pushery.com) — a
+This package is built and maintained by [PUSHERY](https://www.pushery.com) — a
 Berlin-based studio building Laravel applications, SaaS products, and open-source
 tools.
 
-Building a Laravel UI? [WireKit](https://www.wirekit.app) is Pushery's open-source
+Building a Laravel UI? [WireKit](https://www.wirekit.app) is PUSHERY's open-source
 Livewire component kit.
 Browse the rest of our work at [pushery.com](https://www.pushery.com).
 
