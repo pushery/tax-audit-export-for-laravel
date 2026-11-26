@@ -10,8 +10,10 @@ use Pushery\TaxAuditExport\Exceptions\InvalidDefinition;
  * A table as a CSV file in the format of {@see CsvFormat}: a header line, then a record for every row.
  *
  * A number stands without quotes, with a point before its decimals and without grouping. A text stands
- * between double quotes, a quote in it doubled. A line break in a text becomes a space, because an import
- * that follows the `index.xml` reads a line feed as the end of a record wherever it stands. Apart from that
+ * between double quotes, a quote in it doubled. A text with a line break, a line feed or a carriage return,
+ * is refused, because an import that follows the `index.xml` reads a line feed as the end of a record
+ * wherever it stands, and a text changed to fit would no longer be the value of the original: the
+ * application decides what such a text becomes. Apart from that
  * a text stands as given, its first character included, so the value in the file is the value of the
  * original. A text may therefore begin with `=`, `+`, `-`, `@` or a tab, which a spreadsheet takes for the
  * start of a formula: the files are read through an import that follows the `index.xml` and takes such a
@@ -106,11 +108,16 @@ final class Csv
 
     private static function text(Column $column, int|float|string|null $value): string
     {
-        $text = (string) preg_replace('/\r\n|\r|\n/', ' ', (string) $value);
+        $text = (string) $value;
+
+        // The value itself stays out of both messages: a text may carry personal data, and the message
+        // may end up in a log.
+        if (strpbrk($text, "\r\n") !== false) {
+            throw InvalidDefinition::because(sprintf('Column "%s"', $column->name), 'the text holds a line break, which an import reads as the end of a record');
+        }
+
         $length = mb_strlen($text);
 
-        // The value itself stays out of the message: a text may carry personal data, and the message
-        // may end up in a log.
         if ($column->maxLength !== null && $length > $column->maxLength) {
             throw InvalidDefinition::because(sprintf('Column "%s"', $column->name), sprintf('the text has %d characters, more than the greatest length of %d', $length, $column->maxLength));
         }

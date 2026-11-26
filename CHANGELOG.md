@@ -4,6 +4,20 @@ All notable changes to `pushery/tax-audit-export-for-laravel` are documented her
 
 A release carries only the sections that have an entry, in this order: `### ⚠️ Breaking`, `### ✨ Added`, `### 🔧 Changed`, `### ⚡ Performance`, `### 🐛 Fixed`, `### 🔒 Security`, `### 🧹 Deprecated`, `### 🗑️ Removed` and `### 📚 Documentation`.
 
+## [0.2.0] - 2026-11-26
+
+### ⚠️ Breaking
+
+- **A text with a line break is refused instead of written with a space in its place.** `Csv` turned a line feed or a carriage return in a text into a space, which changed the value without a word. It now refuses the text with an `InvalidDefinition` that names the column and leaves the value out, because the `index.xml` declares a line feed as the end of a record. The application decides what such a text becomes before it hands the row over.
+
+### 🔧 Changed
+
+- **A data supplier may have an empty name.** `DataSupplier` refused an empty name, which the document type definition allows. It now takes it and the `index.xml` holds an empty `Name`, so an export does not fail for a business that has not entered its name yet. The reader reads such a description back with an empty name and still refuses one without the element.
+
+### 📚 Documentation
+
+- **The requirements name the versions the package is tested on.** PHP 8.4.27, 8.5.x and 8.6.x, PostgreSQL 18.7 and MySQL 8.4.13, in the README and on the start page of the documentation.
+
 ## [0.1.0] - 2026-11-20
 
 ### ✨ Added
@@ -15,5 +29,6 @@ A release carries only the sections that have an entry, in this order: `### ⚠�
 - **A validator for test suites.** `Testing\IndexValidator` checks an `index.xml` against the definition and returns a message for every place it departs from it.
 - **Settings for the data supplier and the reader.** `ExportSettings` reads the supplier and the limits of the reader from `config/tax-audit-export.php` and starts an export or a reader with them. It reads them once in each request or queued job, so under Octane and in a long-running queue worker a supplier set for one request or job is the one its export names. A supplier name left empty, such as `TAX_AUDIT_EXPORT_SUPPLIER_NAME=` with nothing after it, names the application, the value of `app.name`.
 
-[Unreleased]: https://github.com/pushery/tax-audit-export-for-laravel/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/pushery/tax-audit-export-for-laravel/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/pushery/tax-audit-export-for-laravel/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/pushery/tax-audit-export-for-laravel/releases/tag/v0.1.0
